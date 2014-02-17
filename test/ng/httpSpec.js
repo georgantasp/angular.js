@@ -778,6 +778,20 @@ describe('$http', function() {
         $http({url: '/url2', method: 'POST', headers: {'content-type': 'Rewritten'}});
         $httpBackend.flush();
       });
+      
+      it('should send Content-Type header if request data/body is defined after transform', function() {
+        $httpBackend.expect('POST', '/url', undefined, function(headers) {
+          return headers.hasOwnProperty('Content-Type');
+        }).respond('');
+
+        $http({url: '/url', method: 'POST', transformRequest: function(data){
+          if(angular.isUndefined(data)){
+            return "{}";
+          }
+          return data;
+        }});
+        $httpBackend.flush();
+      });
 
 
       it('should set the XSRF cookie into a XSRF header', inject(function($browser) {
